@@ -9,6 +9,9 @@ const signin = require('./controllers/signin');
 const register = require('./controllers/register');
 const image = require('./controllers/image');
 const profile = require('./controllers/profile');
+const getData = require('./controllers/getData');
+
+const PORT = process.env.PORT || 3001
 
 const db = knex({
     client: 'pg',
@@ -17,24 +20,21 @@ const db = knex({
       ssl: {
         rejectUnauthorized: false
       }
-      // user : 'postgres',
-      // password : 'admin',
-      // database : 'smartbrain'
     }
   });
 
 app.use(bodyParser.json());
+
 app.use(cors());
 
-app.get('/', (req, res) => res.json('it is working'))
-
-app.post('/signin', (req,res) => signin.handleSignin(req, res, db,bcrypt))
+// app.get('/', (req, res) => res.json('it is working'))
+app.post('/', (req,res) => getData.getUser(req, res, db))
+app.post('/signin', (req,res) => signin.handleSignin(req, res, db, bcrypt))
 app.post('/register', (req, res) => register.handleRegister (req, res, db, bcrypt))
 app.get('/profile/:id', (req, res) => profile.handleProfileGet(req,res,db))
 app.put('/image', (req,res) => image.handleImage(req,res,db))
 app.post('/imageurl', (req,res) => image.handleApiCall(req,res))
 
-
-app.listen(process.env.PORT || 3001, ()=> {
-  console.log(`app is running on port ${process.env.PORT}`)
+app.listen(PORT, () => {
+  console.log(`app is running on port ${PORT}`)
 })
